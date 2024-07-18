@@ -3,7 +3,7 @@ import configViewEngine from './config/viewEngine';
 import initWebRoutes from './routes/web.r';
 import initAPIRoutes from './routes/api.r';
 import configCORS from './config/cors';
-
+import connection from './config/connectDB';
 import cookieParser from 'cookie-parser';
 
 import PassportController from './controllers/passport.c';
@@ -24,8 +24,8 @@ app.use(express.json());
 //config view engine
 configViewEngine(app);
 
-// //connect to DB
-// connection();
+// connect to DB
+connection();
 
 //init view engine
 initWebRoutes(app);

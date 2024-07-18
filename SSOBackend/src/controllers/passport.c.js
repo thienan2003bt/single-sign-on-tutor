@@ -4,15 +4,13 @@ import UserClientService from '../services/userClientService';
 
 const configPassport = () => {
     passport.use(new LocalStrategy(async (username, password, callback) => {
-        console.log(`Check username: ${username} and password: ${password}`);
+        console.log(`Login with username: ${username}`);
         const rawData = {
             email: username,
             password,
         }
 
         const response = await UserClientService.handleLogin(rawData);
-        console.log("!!! Response: ");
-        console.log(response);
         if (response && +response.errCode === 0) {
             return callback(null, response.data);
         } else {
@@ -22,9 +20,18 @@ const configPassport = () => {
     }));
 }
 
+const handleLogout = (req, res, next) => {
+    req.logOut((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login');
+    });
+}
 
 const PassportController = {
     configPassport,
+    handleLogout,
 };
 
 module.exports = PassportController;

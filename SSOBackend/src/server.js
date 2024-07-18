@@ -6,6 +6,8 @@ import configCORS from './config/cors';
 
 import cookieParser from 'cookie-parser';
 
+import PassportController from './controllers/passport.c';
+
 require('dotenv').config();
 const PORT = process.env.PORT || 8080; //8080 by default
 
@@ -28,6 +30,8 @@ configViewEngine(app);
 //init view engine
 initWebRoutes(app);
 initAPIRoutes(app);
+
+PassportController.configPassport();
 
 app.use((req, res) => {
     return res.send("404 not found");

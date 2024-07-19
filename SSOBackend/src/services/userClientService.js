@@ -5,11 +5,6 @@ import JWTService from '../services/JWTService';
 
 const SALT_ROUND = bcrypt.genSaltSync(10);
 
-/**
- * 
- * @param {*} rawPassword - password inputted from client
- * @returns hashed password by bcrypt
- */
 const hashUserPassword = async (rawPassword) => {
     return await bcrypt.hash(rawPassword, SALT_ROUND);
 };
@@ -20,12 +15,6 @@ const checkPassword = async (password, hashedPassword) => {
     return await bcrypt.compare(password, hashedPassword);
 }
 
-/**
- * 
- * @param {*} email - email inputted from client
- * @param {*} password - password inputted from client
- * @param {*} username - username inputted from client
- */
 const createNewUser = async (newUser) => {
     try {
         let existingUser = await db.User.findOne({

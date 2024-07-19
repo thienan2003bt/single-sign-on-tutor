@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 
 import PassportController from './controllers/passport.c';
 import SessionConfig from './config/session';
+import flash from 'connect-flash';
+
 
 require('dotenv').config();
 const PORT = process.env.PORT || 8080; //8080 by default
@@ -21,6 +23,7 @@ configCORS(app);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
+app.use(flash());
 
 //config session middlewares for passport
 SessionConfig.configSession(app);

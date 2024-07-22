@@ -1,5 +1,4 @@
 import express from 'express';
-import passport from 'passport';
 import UserMiddleware from '../middlewares/user.m';
 
 const router = express.Router();
@@ -22,10 +21,7 @@ const initWebRoutes = (app) => {
     router.post('/user/create', HomeController.insertNewUser)
     router.post('/user/delete/:id', HomeController.deleteUser);
     router.post('/user/update/:id', HomeController.updateUser);
-    router.post('/login', passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-    }));
+    router.post('/login', LoginController.handleLogin);
     router.post('/logout', PassportController.handleLogout);
 
 

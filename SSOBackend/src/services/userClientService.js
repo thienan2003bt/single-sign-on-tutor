@@ -2,6 +2,7 @@ import db from '../models/index';
 import bcrypt from 'bcrypt';
 import JWTController from '../middlewares/jwt.m';
 import JWTService from '../services/JWTService';
+import { v4 as uuidv4 } from 'uuid';
 
 const SALT_ROUND = bcrypt.genSaltSync(10);
 
@@ -73,7 +74,8 @@ const handleLogin = async (rawUser) => {
 
         let passwordState = await checkPassword(rawUser.password, existingUser.password);
         if (passwordState === true) {
-
+            // LEGACY CODE
+            /* 
             let group_role_list = await JWTService.getGroupWithRoles(existingUser);
             let payload = {
                 email: existingUser.email,
@@ -90,6 +92,16 @@ const handleLogin = async (rawUser) => {
                     group_role_list,
                     email: existingUser.email,
                     username: existingUser.username,
+                },
+            }
+            */
+
+            // NEW CODE
+            return {
+                errCode: '0',
+                errMsg: 'Login successfully',
+                data: {
+                    code: uuidv4().toString(),
                 },
             }
         } else {

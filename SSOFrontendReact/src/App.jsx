@@ -1,12 +1,12 @@
 import Header from "./components/Header/Header";
+import RouteIndex from "./routes/RouteIndex";
 
 function App() {
 	return (
 		<div className="App">
 			<Header />
-			<p>
-				Hello world !
-			</p>
+
+			<RouteIndex />
 		</div>
 	);
 }

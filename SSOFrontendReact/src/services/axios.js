@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: process.env.REACT_APP_SERVER_HTTPS_URL,
     withCredentials: true,
 });
 
@@ -23,11 +22,10 @@ instance.interceptors.response.use((response) => {
         statusCode: response.status,
     }
 }, (err) => {
-    let msg = err.response.data.message;
-    if (msg) {
-        err.message = msg;
-    }
-    return Promise.reject(new Error(msg));
+    const data = err?.response?.data;
+    let msg = data.message;
+
+    return data ?? Promise.reject(new Error(msg ?? ''));
 });
 
 

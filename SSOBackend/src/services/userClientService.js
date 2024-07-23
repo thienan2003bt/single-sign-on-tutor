@@ -320,6 +320,7 @@ const updateUserRefreshToken = async (email, token) => {
         return {
             message: `Update user's refresh token successfully`,
             status: true,
+            data: user,
         }
     } catch (error) {
         console.log("Error: ", error.message);

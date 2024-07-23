@@ -62,14 +62,18 @@ const verifySSOToken = async (req, res, next) => {
                 });
             }
 
-            // req.session.destroy();
+            req.session.destroy();
             res.cookie('access_token', accessToken, {
                 maxAge: +process.env.MAX_AGE_ACCESS_TOKEN,
                 httpOnly: true,
+                domain: process.env.COOKIE_DOMAIN,
+                path: '/',
             })
             res.cookie('refresh_token', refreshToken, {
                 maxAge: +process.env.MAX_AGE_REFRESH_TOKEN,
                 httpOnly: true,
+                domain: process.env.COOKIE_DOMAIN,
+                path: '/',
             })
 
             return res.status(200).json({

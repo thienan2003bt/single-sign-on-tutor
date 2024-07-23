@@ -2,18 +2,19 @@ import React from 'react';
 import './Header.scss';
 import { NavLink } from 'react-router-dom';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLogout } from '../../redux/action/accountAction';
 
 function Header(props) {
     const user = useSelector(state => state.account.userInfo);
 
-    const handleLogin = () => {
-        window.location.replace(`${process.env.REACT_APP_SSO_BACKEND}?serviceURL=${process.env.REACT_APP_SERVICE_URL}`);
+    const dispatch = useDispatch();
+    const handleLogIn = () => {
+        window.location.replace(`${process.env.REACT_APP_SSO_BACKEND_LOGIN}?serviceURL=${process.env.REACT_APP_SERVICE_URL}`);
     }
 
-    const handleLogout = () => {
-        // TODO: implement this
+    const handleLogOut = () => {
+        dispatch(handleLogout());
     }
 
     return (
@@ -34,8 +35,8 @@ function Header(props) {
                             }
                             <NavDropdown title="Settings" id="basic-nav-dropdown">
                                 {(user && user?.access_token)
-                                    ? <NavDropdown.Item onClick={() => handleLogout()}>Logout</NavDropdown.Item>
-                                    : <NavDropdown.Item onClick={() => handleLogin()}>Login</NavDropdown.Item>
+                                    ? <NavDropdown.Item onClick={() => handleLogOut()}>Logout</NavDropdown.Item>
+                                    : <NavDropdown.Item onClick={() => handleLogIn()}>Login</NavDropdown.Item>
                                 }
 
                             </NavDropdown>

@@ -15,8 +15,8 @@ function ConfirmPage(props) {
 
         try {
             const response = await UserService.handleVerifyToken(SSOToken);
-            if (response && +response.errCode === 0) {
-                alert("Your token is: " + response?.data);
+            if (response) {
+                alert("Your token is: " + response?.data?.access_token);
             } else {
                 console.log("Error handling confirm process, error: " + response?.errMsg);
             }

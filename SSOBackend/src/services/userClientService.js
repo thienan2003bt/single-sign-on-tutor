@@ -55,6 +55,30 @@ const createNewUser = async (newUser) => {
 
 };
 
+const generateAccessToken = async (userEmail) => {
+    try {
+        const user = await db.User.findOne({
+            where: { email: userEmail }
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const group_role_list = await JWTService.getGroupWithRoles(user);
+        const payload = {
+            email: user.email,
+            username: user.username,
+            group_role_list,
+        }
+
+        const accessToken = await JWTController.signToken(payload);
+        return accessToken;
+    } catch (error) {
+        console.log("Error generating access token for user, error: ", error.message);
+        return '';
+    }
+}
 
 const handleLogin = async (rawUser) => {
     try {
@@ -74,34 +98,12 @@ const handleLogin = async (rawUser) => {
 
         let passwordState = await checkPassword(rawUser.password, existingUser.password);
         if (passwordState === true) {
-            // LEGACY CODE
-            /* 
-            let group_role_list = await JWTService.getGroupWithRoles(existingUser);
-            let payload = {
-                email: existingUser.email,
-                group_role_list: group_role_list,
-                username: existingUser.username,
-            }
-
-            let accessToken = await JWTController.signToken(payload);
-            return {
-                errCode: '0',
-                errMsg: 'Login successfully',
-                data: {
-                    accessToken,
-                    group_role_list,
-                    email: existingUser.email,
-                    username: existingUser.username,
-                },
-            }
-            */
-
-            // NEW CODE
             return {
                 errCode: '0',
                 errMsg: 'Login successfully',
                 data: {
                     code: uuidv4().toString(),
+                    email: existingUser.email,
                 },
             }
         } else {
@@ -296,6 +298,38 @@ const deleteUser = async (userID) => {
 };
 
 
+const updateUserRefreshToken = async (email, token) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                email: email,
+            }
+        });
+
+        if (!user) {
+            return {
+                status: false,
+                message: 'User not found',
+            }
+        }
+
+        await user.update({
+            refreshToken: token,
+        });
+
+        return {
+            message: `Update user's refresh token successfully`,
+            status: true,
+        }
+    } catch (error) {
+        console.log("Error: ", error.message);
+        return {
+            status: false,
+            message: `Something wrong updating user's refresh token ...`,
+        }
+    }
+};
+
 module.exports = {
     createNewUser,
     handleLogin,
@@ -303,4 +337,6 @@ module.exports = {
     showUserListWithPagination,
     updateUser,
     deleteUser,
+    updateUserRefreshToken,
+    generateAccessToken,
 };

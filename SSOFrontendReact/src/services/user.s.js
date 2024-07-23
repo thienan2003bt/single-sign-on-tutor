@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './axios';
 
 const handleVerifyToken = async (token) => {
     const response = await axios.post(
@@ -10,7 +10,7 @@ const handleVerifyToken = async (token) => {
     console.log("Response from server for verifying token: ");
     console.log(response);
 
-    return response.data;
+    return response;
 }
 
 const UserService = {

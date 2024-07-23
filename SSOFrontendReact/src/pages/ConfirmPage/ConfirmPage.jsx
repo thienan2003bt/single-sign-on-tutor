@@ -2,31 +2,26 @@ import React, { useEffect, useState } from 'react';
 
 import './ConfirmPage.scss';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import UserService from '../../services/user.s';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLogin } from '../../redux/action/accountAction';
 
 function ConfirmPage(props) {
     const [searchParams] = useSearchParams();
     const [SSOToken, setSSOToken] = useState(searchParams.get('ssoToken'));
-    const [message, setMessage] = useState('Hello world');
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const message = useSelector(state => state.account.message);
+    const user = useSelector(state => state.account.userInfo);
+
+
     const handleConfirm = async () => {
         if (!SSOToken) {
             return;
         }
 
-        try {
-            const response = await UserService.handleVerifyToken(SSOToken);
-            if (response && +response?.statusCode === 200) {
-                navigate('/');
-            } else {
-                console.log("Error handling confirm process, error: " + response?.errMsg);
-                setMessage(response?.errMsg ?? '');
-            }
-        } catch (error) {
-            console.log("Error handling confirm process, error: " + error?.message);
-            setMessage(error.message);
-        }
+        dispatch(handleLogin(SSOToken));
     }
 
     useEffect(() => {
@@ -35,6 +30,12 @@ function ConfirmPage(props) {
             setSSOToken(newSSOToken);
         }
     }, [searchParams]);
+
+    useEffect(() => {
+        if (user && user?.access_token) {
+            navigate('/');
+        }
+    }, [user])
 
 
     useEffect(() => {

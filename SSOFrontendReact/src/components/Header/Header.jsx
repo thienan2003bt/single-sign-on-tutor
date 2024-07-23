@@ -1,16 +1,19 @@
 import React from 'react';
 import './Header.scss';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+
 
 function Header(props) {
-    const navigate = useNavigate();
+    const user = useSelector(state => state.account.userInfo);
 
     const handleLogin = () => {
-        // alert("Click me !");
-        // navigate(`${process.env.REACT_APP_SSO_BACKEND}`);
         window.location.replace(`${process.env.REACT_APP_SSO_BACKEND}?serviceURL=${process.env.REACT_APP_SERVICE_URL}`);
-        // window.open(`${process.env.REACT_APP_SSO_BACKEND}?serviceURl=${process.env.REACT_APP_SERVICE_URL}`, '_blank');
+    }
+
+    const handleLogout = () => {
+        // TODO: implement this
     }
 
     return (
@@ -26,8 +29,15 @@ function Header(props) {
                         </Nav>
 
                         <Nav>
+                            {user && user?.access_token &&
+                                <NavLink className='nav-link' to='#'>Welcome, {user?.username ?? user?.email ?? 'anonymous'}!</NavLink>
+                            }
                             <NavDropdown title="Settings" id="basic-nav-dropdown">
-                                <NavDropdown.Item onClick={() => handleLogin()}>Login</NavDropdown.Item>
+                                {(user && user?.access_token)
+                                    ? <NavDropdown.Item onClick={() => handleLogout()}>Logout</NavDropdown.Item>
+                                    : <NavDropdown.Item onClick={() => handleLogin()}>Login</NavDropdown.Item>
+                                }
+
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>

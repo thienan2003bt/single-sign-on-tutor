@@ -110,8 +110,12 @@
                     email, password
                 },
                 success: (data) => {
-                    const redirectURL = `${data.serviceURL}/code?ssoToken=${data?.code ?? ''}`;
-                    window.location.replace(redirectURL);
+                    if (data.serviceURL === window.location.origin) {
+                        window.location.replace(window.location.origin);
+                    } else {
+                        const redirectURL = `${data.serviceURL}/code?ssoToken=${data?.code ?? ''}`;
+                        window.location.replace(redirectURL);
+                    }
                 },
                 error: (req, status, error) => {
                     window.location.reload();

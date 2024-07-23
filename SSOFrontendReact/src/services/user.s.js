@@ -5,8 +5,13 @@ const handleVerifyToken = async (token) => {
         `${process.env.REACT_APP_SSO_BACKEND_VERIFY_TOKEN}`,
         { token }
     );
+    return response;
+}
 
-
+const handleGetAccount = async () => {
+    const response = await axios.get(
+        `${process.env.REACT_APP_SSO_BACKEND_GET_ACCOUNT}`
+    );
     console.log("Response from server for verifying token: ");
     console.log(response);
 
@@ -14,7 +19,8 @@ const handleVerifyToken = async (token) => {
 }
 
 const UserService = {
-    handleVerifyToken
+    handleVerifyToken,
+    handleGetAccount
 }
 
 export default UserService;

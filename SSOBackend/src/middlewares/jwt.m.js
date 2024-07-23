@@ -61,14 +61,17 @@ const checkUser = (req, res, next) => {
     let cookies = req.cookies;
     const tokenFromHeader = extractToken(req);
 
-    if ((cookies && cookies.accessToken) || tokenFromHeader) {
-        let token = cookies.accessToken ? cookies.accessToken : tokenFromHeader;
+    if ((cookies && cookies?.access_token) || tokenFromHeader) {
+        let token = cookies?.access_token ?? tokenFromHeader;
 
         try {
             let decoded = verifyToken(token);
             if (decoded) {
-                req.user = decoded;
-                req.token = token;
+                req.user = {
+                    ...decoded,
+                    access_token: cookies?.access_token,
+                    refresh_token: cookies?.refresh_token,
+                };
                 return next();
             } else {
                 return res.status(401).json({

@@ -31,7 +31,7 @@ const accountReducer = (state = INITIAL_STATE, action) => {
 
         case USER_LOGIN_SUCCESS: return {
             ...state,
-            userInfo: action.user,
+            userInfo: action?.user,
             isLoading: false,
             message: '',
         };

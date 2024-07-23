@@ -38,9 +38,22 @@ const handleLogin = (req, res, next) => {
     })(req, res, next);
 }
 
+const verifySSOToken = (req, res, next) => {
+    console.log(">>> SSOToken from FE: " + req.body?.token);
+
+    return res.status(200).json({
+        errCode: 0,
+        errMsg: 'Verify SSoToken successfully',
+        data: req.body?.token,
+    });
+}
+
+
+
 const LoginController = {
     renderLoginPage,
-    handleLogin
+    handleLogin,
+    verifySSOToken
 }
 
 

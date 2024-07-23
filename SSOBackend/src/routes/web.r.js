@@ -23,7 +23,7 @@ const initWebRoutes = (app) => {
     router.post('/user/update/:id', HomeController.updateUser);
     router.post('/login', LoginController.handleLogin);
     router.post('/logout', PassportController.handleLogout);
-
+    router.post('/verify_token', LoginController.verifySSOToken);
 
     return app.use('/', router);
 }

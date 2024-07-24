@@ -83,11 +83,10 @@
                                 <div class="other-logins text-center">
                                     <span>Or login with: </span>
                                     <div class="login-list">
-                                        <a href="/auth/google">
-                                            <i class="google-login-btn bi bi-google" title="login with google"></i>
-                                        </a>
+                                        <i id="google-login-btn" class="google-login-btn bi bi-google"
+                                            title="login with google"></i>
                                         <a href="/auth/facebook">
-                                            <i class="facebook-login-btn bi bi-facebook"
+                                            <i id="facebook-login-btn" class="facebook-login-btn bi bi-facebook"
                                                 title="login with facebook"></i>
                                         </a>
                                     </div>
@@ -102,8 +101,8 @@
 
 <script>
     $(document).ready(() => {
+        const serviceURL = window.location.search;
         $('#login-submit-btn').on('click', () => {
-            const serviceURL = window.location.search;
             console.log("serviceURL: " + serviceURL);
             const email = $('#email').val();
             const password = $('#password').val();
@@ -126,6 +125,12 @@
                     window.location.reload();
                 }
             })
+        })
+
+        $('#google-login-btn').on('click', () => {
+            localStorage.removeItem('serviceURL');
+            localStorage.setItem('serviceURL', serviceURL.split('=')[1]);
+            window.location.replace(`/auth/google?`);
         })
     })
 </script>

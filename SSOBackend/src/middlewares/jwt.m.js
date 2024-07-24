@@ -115,7 +115,6 @@ const checkUserPermission = (req, res, next) => {
 
         let matchURL = roleList.some(item => {
             let state = item.url === currentURL;
-            //console.log(`Current URL: ${currentURL} versus item: ${item.url}`);
             return state;
         });
         if (matchURL) {

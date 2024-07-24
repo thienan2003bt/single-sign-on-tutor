@@ -359,6 +359,7 @@ const upsertUserFromSocialMedia = async (type, rawData) => {
 
         }
 
+        user.code = uuidv4().toString();
         return user;
     } catch (error) {
         console.log("Error upserting user from social media, error: ") + error?.message ?? error;

@@ -5,6 +5,8 @@ const handleVerifyToken = async (token) => {
         `${process.env.REACT_APP_SSO_BACKEND_VERIFY_TOKEN}`,
         { token }
     );
+
+    console.log("Verification for token: " + token);
     return response;
 }
 

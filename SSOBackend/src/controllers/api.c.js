@@ -69,7 +69,6 @@ const postLogin = async (req, res, next) => {
 
 const postLogout = (req, res, next) => {
     try {
-        console.log("!!! Have reached there");
         res.clearCookie('access_token', { domain: process.env.COOKIE_DOMAIN, path: '/' });
         res.clearCookie('refresh_token', { domain: process.env.COOKIE_DOMAIN, path: '/' });
         return res.status(200).json({

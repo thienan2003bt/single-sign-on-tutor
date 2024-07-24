@@ -16,7 +16,6 @@ const handleLogin = (req, res, next) => {
     const serviceURL = req.query?.serviceURL ?? 'http://localhost:8080';
 
     passport.authenticate('local', {
-        // successRedirect: '/',
         failureRedirect: '/login',
     }, (err, user, info) => {
         if (err) {
@@ -32,7 +31,6 @@ const handleLogin = (req, res, next) => {
             if (err) {
                 return res.status(500).json(err);
             }
-            // return res.status(200).redirect(`${serviceURL}code?ssoToken=${user?.code ?? ''}`);
             return res.status(200).json({
                 ...user,
                 serviceURL: serviceURL
@@ -43,7 +41,6 @@ const handleLogin = (req, res, next) => {
 
 const verifySSOToken = async (req, res, next) => {
     const SSOToken = req.body?.token ?? '';
-    console.log(">>> SSOToken from FE: " + SSOToken);
     // Validate domains that are allowed to access
 
     // Generate tokens for user

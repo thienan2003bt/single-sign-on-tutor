@@ -7,6 +7,7 @@ import connection from './config/connectDB';
 import cookieParser from 'cookie-parser';
 
 import PassportController from './controllers/passport.c';
+import GoogleController from './controllers/social/google.c';
 import SessionConfig from './config/session';
 import flash from 'connect-flash';
 
@@ -39,6 +40,7 @@ initWebRoutes(app);
 initAPIRoutes(app);
 
 PassportController.configPassport();
+GoogleController.configLoginWithGoogle();
 
 app.use((req, res) => {
     return res.send("404 not found");

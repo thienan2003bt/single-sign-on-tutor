@@ -2,7 +2,7 @@ import express from 'express';
 import UserMiddleware from '../middlewares/user.m';
 
 const router = express.Router();
-
+import passport from 'passport';
 import HomeController from '../controllers/home.c';
 import LoginController from '../controllers/login.c';
 import PassportController from '../controllers/passport.c';
@@ -16,6 +16,13 @@ const initWebRoutes = (app) => {
     router.get('/user', HomeController.renderUserPage);
     router.get('/user/update/:id', HomeController.renderUpdateUserPage);
     router.get('/login', UserMiddleware.isLogin, LoginController.renderLoginPage);
+    router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+    router.get('/google/redirect', passport.authenticate(
+        'google',
+        { failureRedirect: '/login' }
+    ), (req, res, next) => {
+        res.redirect('/');
+    })
 
     //POST
     router.post('/user/create', HomeController.insertNewUser)

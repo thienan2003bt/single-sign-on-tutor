@@ -331,6 +331,40 @@ const updateUserRefreshToken = async (email, token) => {
     }
 };
 
+const upsertUserFromSocialMedia = async (type, rawData) => {
+    try {
+        let user = null;
+        if (type === 'GOOGLE') {
+            user = await db.User.findOne({
+                where: {
+                    email: rawData?.email,
+                    type: type,
+                },
+                raw: true,
+            })
+
+            if (!user) {
+                console.log("!! Create new user from Google account");
+                user = await db.User.create({
+                    email: rawData?.email,
+                    username: rawData?.username,
+                    type: type,
+                })
+
+                user = user.get({ plain: true });
+            } else {
+                console.log("!! Login with Google account, email: " + rawData?.email);
+            }
+        } else if (type === 'FACEBOOK') {
+
+        }
+
+        return user;
+    } catch (error) {
+        console.log("Error upserting user from social media, error: ") + error?.message ?? error;
+    }
+}
+
 module.exports = {
     createNewUser,
     handleLogin,
@@ -340,4 +374,5 @@ module.exports = {
     deleteUser,
     updateUserRefreshToken,
     generateAccessToken,
+    upsertUserFromSocialMedia,
 };

@@ -85,10 +85,8 @@
                                     <div class="login-list">
                                         <i id="google-login-btn" class="google-login-btn bi bi-google"
                                             title="login with google"></i>
-                                        <a href="/auth/facebook">
-                                            <i id="facebook-login-btn" class="facebook-login-btn bi bi-facebook"
-                                                title="login with facebook"></i>
-                                        </a>
+                                        <i id="facebook-login-btn" class="facebook-login-btn bi bi-facebook"
+                                            title="login with facebook"></i>
                                     </div>
                                 </div>
 
@@ -130,8 +128,14 @@
         $('#google-login-btn').on('click', () => {
             localStorage.removeItem('serviceURL');
             localStorage.setItem('serviceURL', serviceURL.split('=')[1]);
-            window.location.replace(`/auth/google?`);
-        })
+            window.location.replace(`/auth/google`);
+        });
+
+        $('#facebook-login-btn').on('click', () => {
+            localStorage.removeItem('serviceURL');
+            localStorage.setItem('serviceURL', serviceURL.split('=')[1]);
+            window.location.replace(`/auth/facebook`);
+        });
     })
 </script>
 

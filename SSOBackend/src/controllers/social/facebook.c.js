@@ -1,21 +1,25 @@
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 import 'dotenv/config';
+const FacebookStrategy = require('passport-facebook').Strategy;
 import passport from 'passport';
 import UserClientService from '../../services/userClientService';
-import { v4 as uuidv4 } from 'uuid';
 
-const configLoginWithGoogle = () => {
-    passport.use(new GoogleStrategy({
-        clientID: process.env.GOOGLE_APP_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_APP_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_APP_CALLBACK_URL,
+const configLoginWithFacebook = () => {
+    passport.use(new FacebookStrategy({
+        clientID: process.env.FACEBOOK_APP_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_APP_CLIENT_SECRET,
+        callbackURL: process.env.FACEBOOK_APP_CALLBACK_URL,
+        profileFields: ['id', 'emails', 'name', 'displayName'],
     }, async (accessToken, refreshToken, profile, callback) => {
+
+        console.log("Profile from facebook: ");
+        console.log(profile);
         const userEmail = (profile?.emails && profile?.emails.length > 0) ? profile.emails[0]?.value : profile.id;
         const rawData = {
             username: profile?.displayName,
             email: userEmail,
         }
-        const user = await UserClientService.upsertUserFromSocialMedia('GOOGLE', rawData);
+        const user = await UserClientService.upsertUserFromSocialMedia('FACEBOOK', rawData);
+        console.log("Login with facebook account, code: " + user?.code);
         return callback(null, user);
     }))
 }
@@ -27,7 +31,7 @@ const handleRedirectAfterLogin = async (req, res, next) => {
 }
 
 const GoogleController = {
-    configLoginWithGoogle,
+    configLoginWithFacebook,
     handleRedirectAfterLogin,
 }
 

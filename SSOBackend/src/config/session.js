@@ -38,7 +38,6 @@ const configSession = (app) => {
 
     passport.serializeUser((user, callback) => {
         process.nextTick(() => {
-            console.log("## Have called serializeUser() !");
             callback(null, user);
         });
     });

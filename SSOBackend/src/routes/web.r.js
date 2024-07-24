@@ -7,6 +7,7 @@ import HomeController from '../controllers/home.c';
 import LoginController from '../controllers/login.c';
 import PassportController from '../controllers/passport.c';
 import GoogleController from '../controllers/social/google.c';
+import FacebookController from '../controllers/social/facebook.c';
 
 /**
  * 
@@ -27,6 +28,13 @@ const initWebRoutes = (app) => {
     router.get('/google/redirect', passport.authenticate('google', {
         failureRedirect: '/login',
     }), GoogleController.handleRedirectAfterLogin);
+
+    router.get('/auth/facebook', passport.authenticate('facebook',
+        { scope: ['email'] }
+    ));
+    router.get('/facebook/redirect', passport.authenticate('facebook', {
+        failureRedirect: '/login',
+    }), FacebookController.handleRedirectAfterLogin);
 
     //POST
     router.post('/user/create', HomeController.insertNewUser)

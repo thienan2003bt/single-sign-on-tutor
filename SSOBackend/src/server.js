@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 
 import PassportController from './controllers/passport.c';
 import GoogleController from './controllers/social/google.c';
+import FacebookController from './controllers/social/facebook.c';
 import SessionConfig from './config/session';
 import flash from 'connect-flash';
 
@@ -41,6 +42,7 @@ initAPIRoutes(app);
 
 PassportController.configPassport();
 GoogleController.configLoginWithGoogle();
+FacebookController.configLoginWithFacebook();
 
 app.use((req, res) => {
     return res.send("404 not found");

@@ -334,29 +334,25 @@ const updateUserRefreshToken = async (email, token) => {
 const upsertUserFromSocialMedia = async (type, rawData) => {
     try {
         let user = null;
-        if (type === 'GOOGLE') {
-            user = await db.User.findOne({
-                where: {
-                    email: rawData?.email,
-                    type: type,
-                },
-                raw: true,
+        user = await db.User.findOne({
+            where: {
+                email: rawData?.email,
+                type: type,
+            },
+            raw: true,
+        })
+
+        if (!user) {
+            console.log(`!! Create new user from ${type} account`);
+            user = await db.User.create({
+                email: rawData?.email,
+                username: rawData?.username,
+                type: type,
             })
 
-            if (!user) {
-                console.log("!! Create new user from Google account");
-                user = await db.User.create({
-                    email: rawData?.email,
-                    username: rawData?.username,
-                    type: type,
-                })
-
-                user = user.get({ plain: true });
-            } else {
-                console.log("!! Login with Google account, email: " + rawData?.email);
-            }
-        } else if (type === 'FACEBOOK') {
-
+            user = user.get({ plain: true });
+        } else {
+            console.log(`!! Login with ${type} account, username:  ${rawData?.username}`);
         }
 
         user.code = uuidv4().toString();

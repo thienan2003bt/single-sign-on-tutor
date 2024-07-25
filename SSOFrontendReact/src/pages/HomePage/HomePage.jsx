@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { increaseCounter, decreaseCounter } from '../../redux/action/counterAction';
 
 function HomePage(props) {
     const dispatch = useDispatch();
     const count = useSelector(state => state.counter.count);
+
 
 
     return (

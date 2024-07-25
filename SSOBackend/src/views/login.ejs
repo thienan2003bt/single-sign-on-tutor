@@ -11,6 +11,12 @@
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- JQuery -->
+    <script src="
+    https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js
+    "></script>
+
     <title>Login</title>
 
 
@@ -45,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <form action="/login" method="POST">
+            <form action="/login?serviceURL=<%= serviceURL %>" method="POST">
                 <div class="login-container col-6 mx-auto">
                     <fieldset class="border rounded-3 p-3">
                         <legend class="float-none w-auto px-3">Login Form</legend>
@@ -54,12 +60,6 @@
                                 <%= error %>
                             </div>
                             <% } %>
-                                <!-- <div class="input-group has-validation">
-                            <input name="empty" placeholder="" class="form-control d-none is-invalid" />
-                            <div class="invalid-feedback">
-                                <%= error %>
-                            </div>
-                        </div> -->
                                 <div class="mb-3">
                                     <label for="email">Email or phone: </label>
                                     <div class="input-group has-validation">
@@ -77,14 +77,16 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Log in</button>
+                                <button type="button" id="login-submit-btn" class="btn btn-primary">Log in</button>
                                 <hr />
 
                                 <div class="other-logins text-center">
                                     <span>Or login with: </span>
                                     <div class="login-list">
-                                        <i class="google-login-btn bi bi-google" title="login with google"></i>
-                                        <i class="facebook-login-btn bi bi-facebook" title="login with facebook"></i>
+                                        <i id="google-login-btn" class="google-login-btn bi bi-google"
+                                            title="login with google"></i>
+                                        <i id="facebook-login-btn" class="facebook-login-btn bi bi-facebook"
+                                            title="login with facebook"></i>
                                     </div>
                                 </div>
 
@@ -94,5 +96,48 @@
         </div>
     </div>
 </body>
+
+<script>
+    $(document).ready(() => {
+        const serviceURL = window.location.search;
+        $('#login-submit-btn').on('click', () => {
+            console.log("serviceURL: " + serviceURL);
+            const email = $('#email').val();
+            const password = $('#password').val();
+            $.ajax({
+                type: 'POST',
+                url: `${window.location.origin}/login${serviceURL}`,
+                withCredentials: true,
+                data: {
+                    email, password
+                },
+                success: (data) => {
+                    if (data.serviceURL === window.location.origin) {
+                        window.location.replace(window.location.origin);
+                    } else {
+                        const redirectURL = `${data.serviceURL}/code?ssoToken=${data?.code ?? ''}`;
+                        window.location.replace(redirectURL);
+                    }
+                },
+                error: (req, status, error) => {
+                    window.location.reload();
+                }
+            })
+        })
+
+        $('#google-login-btn').on('click', () => {
+            localStorage.removeItem('serviceURL');
+            localStorage.setItem('serviceURL', serviceURL.split('=')[1]);
+            window.location.replace(`/auth/google`);
+        });
+
+        $('#facebook-login-btn').on('click', () => {
+            localStorage.removeItem('serviceURL');
+            localStorage.setItem('serviceURL', serviceURL.split('=')[1]);
+            window.location.replace(`/auth/facebook`);
+        });
+    })
+</script>
+
 
 </html>

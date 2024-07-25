@@ -49,7 +49,6 @@ const getUserAccount = async (req, res, next) => {
         errCode: '0',
         errMsg: 'User account is available',
         data: {
-            accessToken: req.token,
             ...req.user,
         }
     })

@@ -2,6 +2,7 @@ import db from '../models/index';
 import bcrypt from 'bcrypt';
 import JWTController from '../middlewares/jwt.m';
 import JWTService from '../services/JWTService';
+import { v4 as uuidv4 } from 'uuid';
 
 const SALT_ROUND = bcrypt.genSaltSync(10);
 
@@ -54,6 +55,30 @@ const createNewUser = async (newUser) => {
 
 };
 
+const generateAccessToken = async (userEmail) => {
+    try {
+        const user = await db.User.findOne({
+            where: { email: userEmail }
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const group_role_list = await JWTService.getGroupWithRoles(user);
+        const payload = {
+            email: user.email,
+            username: user.username,
+            group_role_list,
+        }
+
+        const accessToken = await JWTController.signToken(payload);
+        return accessToken;
+    } catch (error) {
+        console.log("Error generating access token for user, error: ", error.message);
+        return '';
+    }
+}
 
 const handleLogin = async (rawUser) => {
     try {
@@ -73,23 +98,12 @@ const handleLogin = async (rawUser) => {
 
         let passwordState = await checkPassword(rawUser.password, existingUser.password);
         if (passwordState === true) {
-
-            let group_role_list = await JWTService.getGroupWithRoles(existingUser);
-            let payload = {
-                email: existingUser.email,
-                group_role_list: group_role_list,
-                username: existingUser.username,
-            }
-
-            let accessToken = await JWTController.signToken(payload);
             return {
                 errCode: '0',
                 errMsg: 'Login successfully',
                 data: {
-                    accessToken,
-                    group_role_list,
+                    code: uuidv4().toString(),
                     email: existingUser.email,
-                    username: existingUser.username,
                 },
             }
         } else {
@@ -284,6 +298,70 @@ const deleteUser = async (userID) => {
 };
 
 
+const updateUserRefreshToken = async (email, token) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                email: email,
+            }
+        });
+
+        if (!user) {
+            return {
+                status: false,
+                message: 'User not found',
+            }
+        }
+
+        await user.update({
+            refreshToken: token,
+        });
+
+        return {
+            message: `Update user's refresh token successfully`,
+            status: true,
+            data: user,
+        }
+    } catch (error) {
+        console.log("Error: ", error.message);
+        return {
+            status: false,
+            message: `Something wrong updating user's refresh token ...`,
+        }
+    }
+};
+
+const upsertUserFromSocialMedia = async (type, rawData) => {
+    try {
+        let user = null;
+        user = await db.User.findOne({
+            where: {
+                email: rawData?.email,
+                type: type,
+            },
+            raw: true,
+        })
+
+        if (!user) {
+            console.log(`!! Create new user from ${type} account`);
+            user = await db.User.create({
+                email: rawData?.email,
+                username: rawData?.username,
+                type: type,
+            })
+
+            user = user.get({ plain: true });
+        } else {
+            console.log(`!! Login with ${type} account, username:  ${rawData?.username}`);
+        }
+
+        user.code = uuidv4().toString();
+        return user;
+    } catch (error) {
+        console.log("Error upserting user from social media, error: ") + error?.message ?? error;
+    }
+}
+
 module.exports = {
     createNewUser,
     handleLogin,
@@ -291,4 +369,7 @@ module.exports = {
     showUserListWithPagination,
     updateUser,
     deleteUser,
+    updateUserRefreshToken,
+    generateAccessToken,
+    upsertUserFromSocialMedia,
 };

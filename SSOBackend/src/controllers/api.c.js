@@ -1,4 +1,5 @@
 import UserClientService from '../services/userClientService';
+import 'dotenv/config';
 
 const getTestAPI = (req, res, next) => {
     try {
@@ -49,7 +50,12 @@ const postLogin = async (req, res, next) => {
         let newUser = await UserClientService.handleLogin(req.body);
 
         if (newUser && newUser.data && newUser.data.accessToken) {
-            res.cookie("accessToken", newUser.data?.accessToken, { httpOnly: true, maxAge: 60 * 60 * 1000 }); //1h
+            res.cookie("access_token", newUser.data?.accessToken, {
+                maxAge: +process.env.MAX_AGE_ACCESS_TOKEN,
+                httpOnly: true,
+                domain: process.env.COOKIE_DOMAIN,
+                path: '/',
+            });
         }
         return res.status(200).json({
             errCode: newUser.errCode,
@@ -63,7 +69,8 @@ const postLogin = async (req, res, next) => {
 
 const postLogout = (req, res, next) => {
     try {
-        res.clearCookie('accessToken');
+        res.clearCookie('access_token', { domain: process.env.COOKIE_DOMAIN, path: '/' });
+        res.clearCookie('refresh_token', { domain: process.env.COOKIE_DOMAIN, path: '/' });
         return res.status(200).json({
             errCode: '0',
             errMsg: "Logout successfully",

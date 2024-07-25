@@ -33,6 +33,10 @@ module.exports = {
       groupId: {
         type: Sequelize.INTEGER
       },
+      OTPCode: {
+        type: Sequelize.STRING
+      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

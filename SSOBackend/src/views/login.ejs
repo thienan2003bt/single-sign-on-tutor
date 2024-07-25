@@ -53,7 +53,7 @@
         <div class="row">
             <form action="/login?serviceURL=<%= serviceURL %>" method="POST">
                 <div class="login-container col-6 mx-auto">
-                    <fieldset class="border rounded-3 p-3">
+                    <fieldset class="d-flex flex-column border col-12 rounded-3 p-3">
                         <legend class="float-none w-auto px-3">Login Form</legend>
                         <% if( error !="" ){ %>
                             <div class="alert alert-danger my-1" role="alert">
@@ -77,7 +77,8 @@
                                     </div>
                                 </div>
 
-                                <button type="button" id="login-submit-btn" class="btn btn-primary">Log in</button>
+                                <button type="button" id="login-submit-btn" class="btn btn-primary mx-auto">Log
+                                    in</button>
                                 <hr />
 
                                 <div class="other-logins text-center">

@@ -19,7 +19,9 @@ const initWebRoutes = (app) => {
     router.get('/user', HomeController.renderUserPage);
     router.get('/user/update/:id', HomeController.renderUpdateUserPage);
     router.get('/login', UserMiddleware.isLogin, LoginController.renderLoginPage);
-
+    router.get('/forgot-password',
+        (req, res, next) => res.render('forgotPassword.ejs')
+    )
 
     router.get('/auth/google', passport.authenticate(
         'google',

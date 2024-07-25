@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import WeatherService from '../../services/weather.s';
 import './Weather.scss';
+import moment from 'moment';
 
 function Weather(props) {
     const [weatherData, setWeatherData] = useState([]);
-    const HCM_woeid = 1236594;
     const allWeatherState = {
         "Snow": "sn",
         "Sleet": "sl",
@@ -37,12 +37,16 @@ function Weather(props) {
         }
     }
 
-
+    const formatTime = (time, index) => {
+        const day = new Date(time);
+        day.setDate(day.getDate() + index);
+        return moment(day).format('dddd');
+    }
 
 
     useEffect(() => {
-        getWeatherByLocation(HCM_woeid);
-    }, []);
+        getWeatherByLocation(props?.city ?? '1236594');
+    }, [props?.city]);
 
 
     return (
@@ -58,7 +62,11 @@ function Weather(props) {
                                     alt="First slide"
                                 />
                                 <Carousel.Caption>
-                                    <h3>{item.weather_state_name}</h3>
+                                    <h3>
+                                        {`${item.weather_state_name} `}
+                                        -
+                                        {` ${formatTime(item?.applicable_date, index)}`}
+                                    </h3>
                                     <p>{item.max_temp}&#8451; - <span style={{ color: '#70757a' }}>{item.min_temp}&#8451;</span></p>
                                 </Carousel.Caption>
                             </Carousel.Item>

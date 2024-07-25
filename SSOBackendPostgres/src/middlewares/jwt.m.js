@@ -41,6 +41,7 @@ const checkUser = async (req, res, next) => {
             })
         }
     } else {
+        // res.status(400)
         return res.status(400).json({
             errCode: '-3',
             errMsg: 'Not provide authorization token in headers',

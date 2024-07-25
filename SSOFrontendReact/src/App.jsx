@@ -26,7 +26,7 @@ function App() {
 		}
 	}
 
-	const handleFirstUseEffectCall = () => {
+	const handleFirstUseEffectCall = async () => {
 		if (!user || !user?.access_token) {
 			dispatch(handleGetAccount());
 		}
@@ -35,6 +35,7 @@ function App() {
 		if (user?.access_token !== '') {
 			setIsFirstUseEffectCalled(true);
 		}
+
 	}
 
 	useEffect(() => {
@@ -43,6 +44,10 @@ function App() {
 
 	useEffect(() => {
 		if (isFirstUseEffectCalled === true) {
+			if (!user || !user?.refresh_token) {
+				window.location.replace(`${process.env.REACT_APP_SSO_BACKEND_LOGIN}?serviceURL=${process.env.REACT_APP_SERVICE_URL}`);
+			}
+
 			handleGettingWeather();
 		}
 	}, [isFirstUseEffectCalled]);

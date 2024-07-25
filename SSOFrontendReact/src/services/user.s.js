@@ -6,7 +6,6 @@ const handleVerifyToken = async (token) => {
         { token }
     );
 
-    console.log("Verification for token: " + token);
     return response;
 }
 

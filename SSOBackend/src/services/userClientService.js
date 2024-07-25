@@ -358,11 +358,34 @@ const upsertUserFromSocialMedia = async (type, rawData) => {
         user.code = uuidv4().toString();
         return user;
     } catch (error) {
-        console.log("Error upserting user from social media, error: ") + error?.message ?? error;
+        console.log("Error upserting user from social media, error: " + error?.message ?? error);
     }
 }
 
-module.exports = {
+const getUserByRefreshToken = async (refreshToken) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                refreshToken: refreshToken
+            },
+        });
+
+        if (user) {
+            const groupWithRoles = await JWTService.getGroupWithRoles(user);
+            return {
+                email: user?.email,
+                username: user?.username,
+                groupWithRoles
+            }
+        }
+
+        return null;
+    } catch (error) {
+        console.log("Error getting user by refresh token, error: " + error?.message ?? error);
+    }
+}
+
+const UserClientService = {
     createNewUser,
     handleLogin,
     showUserList,
@@ -372,4 +395,7 @@ module.exports = {
     updateUserRefreshToken,
     generateAccessToken,
     upsertUserFromSocialMedia,
-};
+    getUserByRefreshToken,
+}
+
+module.exports = UserClientService;

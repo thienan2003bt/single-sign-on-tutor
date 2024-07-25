@@ -42,6 +42,7 @@ export const handleGetAccount = () => {
                 })
             } else {
                 dispatch({ type: USER_LOGIN_FAILED, error: response?.errMsg })
+                window.location.replace(`${process.env.REACT_APP_SSO_BACKEND_LOGIN}?serviceURL=${process.env.REACT_APP_SERVICE_URL}`);
             }
         } catch (error) {
             dispatch({ type: USER_LOGIN_FAILED, error: error?.errMsg })

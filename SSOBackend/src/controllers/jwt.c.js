@@ -99,6 +99,7 @@ const checkUser = async (req, res, next) => {
                 })
             }
         } catch (error) {
+            console.log('Service error: ở đây chứ gì :>>' + error.message);
             return res.status(500).json({
                 errCode: '-2',
                 errMsg: 'Service error: ở đây chứ gì :>>' + error.message,
@@ -161,7 +162,7 @@ const checkServiceJWT = (req, res, next) => {
         let token = tokenFromHeader;
 
         try {
-            let decoded = verifyToken(token);
+            let decoded = JWTMiddleware.verifyToken(token);
             // TODO: refresh_token
 
             if (decoded) {
@@ -178,6 +179,7 @@ const checkServiceJWT = (req, res, next) => {
                 })
             }
         } catch (error) {
+            console.log('Service error: ' + error.message);
             return res.status(500).json({
                 errCode: '-2',
                 errMsg: 'Service error: ' + error.message,

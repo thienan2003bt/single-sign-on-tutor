@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 
 let store = null;
 export const injectStore = (_store) => {
@@ -9,8 +10,21 @@ const instance = axios.create({
     withCredentials: true,
 });
 
-// instance.defaults.headers.common['Authorization'] = `Bearer ${store.getState()?.account?.userInfo?.access_token ?? 'AUTH_TOKEN'}`;
+axiosRetry(instance, {
+    retries: 3,
+    retryCondition: (error) => {
+        if (error?.response?.status === 400 || error?.response?.status === 405) {
+            return true;
+        }
+    },
+    retryDelay: (retryCount, error) => {
+        return retryCount * 100;//100 milliseconds
+    }
+});
 
+
+
+// instance.defaults.headers.common['Authorization'] = `Bearer ${store.getState()?.account?.userInfo?.access_token ?? 'AUTH_TOKEN'}`;
 //REQUEST
 instance.interceptors.request.use((config) => {
     const tokenInHeader = store.getState()?.account?.userInfo?.access_token ?? '';

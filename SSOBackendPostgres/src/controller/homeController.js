@@ -92,7 +92,9 @@ let getDataByURL = async (req, res) => {
 
         // let data = await axios.get(url);
         return res.status(200).json({
-            ...data
+            errCode: '0',
+            errMsg: 'Get weather data successfully',
+            data: data,
         });
 
     } catch (e) {

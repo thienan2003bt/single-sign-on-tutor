@@ -1,20 +1,20 @@
 import express from "express";
 import homeController from '../controller/homeController';
+import JWTMiddleware from "../middlewares/jwt.m";
+
 
 const router = express.Router();
 
-/**
- * 
- * @param {*} app : express app
- */
-
 const initWebRoutes = (app) => {
+
+    router.all('*', JWTMiddleware.checkUser);
+
     router.get("/", (req, res) => {
         return res.send("Hello world with Eric & HoiDanIT")
     })
     router.get("/health", (req, res) => {
         return res.status(200).json({
-            messeage: 'ok'
+            message: 'ok'
         })
     })
     router.post("/get-data-by-url", homeController.getDataByURL);

@@ -19,6 +19,7 @@ const initAPIRoutes = (app) => {
     router.get('/group/show', GroupController.getAllGroups);
     router.get('/account', UserController.getUserAccount);
     router.get('/role/show', RoleController.showRoleList);
+    router.get('/verify-services-jwt', JWTMiddleware.checkServiceJWT)
 
     //POST
     router.post('/signup', APIController.postSignup);

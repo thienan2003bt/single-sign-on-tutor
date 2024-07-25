@@ -52,5 +52,5 @@ app.use(bodyParser.urlencoded({ extended: true }));
 initWebRoutes(app);
 
 app.listen(PORT, () => {
-    console.log(">>> React Ultimate Backend is running on the port = " + PORT + ", url: http://localhost:" + PORT);
+    console.log(">>> Service Backend Postgres For SSO is running on the port = " + PORT + ", url: http://localhost:" + PORT);
 })

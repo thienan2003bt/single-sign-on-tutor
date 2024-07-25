@@ -52,7 +52,7 @@ const extractToken = (req) => {
 }
 
 
-const nonSecurePaths = ['/test-api', '/signup', '/login', '/logout', '/account'];
+const nonSecurePaths = ['/test-api', '/signup', '/login', '/logout', '/account', '/verify-services-jwt'];
 
 const checkUser = (req, res, next) => {
     if (nonSecurePaths.includes(req.path) && req.path !== '/account') {
@@ -136,6 +136,43 @@ const checkUserPermission = (req, res, next) => {
     }
 }
 
+const checkServiceJWT = (req, res, next) => {
+    const tokenFromHeader = extractToken(req);
+
+    if (tokenFromHeader) {
+        let token = tokenFromHeader;
+
+        try {
+            let decoded = verifyToken(token);
+            // TODO: refresh_token
+            if (decoded) {
+                return res.status(200).json({
+                    errCode: '0',
+                    errMsg: 'Verify user for service successfully',
+                    data: true,
+                });
+            } else {
+                return res.status(401).json({
+                    errCode: '-2',
+                    errMsg: 'Unauthenticated user',
+                    data: null,
+                })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                errCode: '-2',
+                errMsg: 'Service error: ' + error.message,
+                data: null,
+            })
+        }
+    } else {
+        return res.status(400).json({
+            errCode: '-2',
+            errMsg: 'Not provide authorization token in headers',
+            data: null,
+        })
+    }
+}
 
 const JWTMiddleware = {
     verifyToken,
@@ -143,6 +180,7 @@ const JWTMiddleware = {
     signToken,
     checkUser,
     checkUserPermission,
+    checkServiceJWT,
 }
 
 

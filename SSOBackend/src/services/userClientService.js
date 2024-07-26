@@ -385,6 +385,41 @@ const getUserByRefreshToken = async (refreshToken) => {
     }
 }
 
+const updateUserOTPCode = async (email, code) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                email: email,
+                type: 'LOCAL',
+            }
+        });
+
+        if (!user) {
+            return {
+                status: false,
+                message: 'User not found',
+            }
+        }
+
+        await user.update({
+            OTPCode: code,
+        });
+
+        return {
+            message: `Update user's OTP code successfully`,
+            status: true,
+            data: user,
+        }
+    } catch (error) {
+        console.log("Error: ", error.message);
+        return {
+            status: false,
+            message: `Something wrong updating user's OTP code ...`,
+        }
+    }
+}
+
+
 const UserClientService = {
     createNewUser,
     handleLogin,
@@ -396,6 +431,7 @@ const UserClientService = {
     generateAccessToken,
     upsertUserFromSocialMedia,
     getUserByRefreshToken,
+    updateUserOTPCode,
 }
 
 module.exports = UserClientService;

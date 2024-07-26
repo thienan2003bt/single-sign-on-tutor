@@ -145,8 +145,12 @@
         })
 
         $('#resetPasswordSpan').on('click', () => {
-            $('#resetPasswordModal').modal('show');
+            window.location.replace('/forgot-password');
         })
+
+        // $('#resetPasswordSpan').on('click', () => {
+        //     $('#resetPasswordModal').modal('show');
+        // })
 
         $('#login-submit-btn').on('click', () => {
             console.log("serviceURL: " + serviceURL);

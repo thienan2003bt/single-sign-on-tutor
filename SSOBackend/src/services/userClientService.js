@@ -424,9 +424,6 @@ const updateUserOTPCode = async (email, code) => {
 
 
 const handleResetUserPassword = async (rawData) => {
-    console.log(">> Raw data: ");
-    console.log(rawData);
-
     try {
         const user = await db.User.findOne({
             where: {
@@ -442,7 +439,6 @@ const handleResetUserPassword = async (rawData) => {
                 message: 'User not found!',
             }
         } else if (user?.OTPCode !== rawData?.OTPCode) {
-            console.log(`User ${user?.OTPCode} vs data ${rawData?.OTPCode}`);
             return {
                 status: false,
                 message: 'OTP Code not match!',
@@ -461,6 +457,7 @@ const handleResetUserPassword = async (rawData) => {
         const newPassword = await hashUserPassword(rawData?.new_password);
         await user.update({
             password: newPassword,
+            OTPCode: null,
         });
 
         return {

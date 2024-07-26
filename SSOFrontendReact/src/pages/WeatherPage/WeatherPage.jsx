@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Weather from '../../components/Weather/Weather';
 
-function AboutPage(props) {
+function WeatherPage(props) {
 
     const [city, setCity] = useState('1236594');
     const handleSelectChange = (e) => {
@@ -21,4 +21,4 @@ function AboutPage(props) {
     );
 }
 
-export default AboutPage;
+export default WeatherPage;

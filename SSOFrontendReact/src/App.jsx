@@ -57,7 +57,7 @@ function App() {
 		<div className="App">
 			<Header />
 
-			{isLoading === false
+			{(isLoading === false && isFirstUseEffectCalled === true)
 				? <RouteIndex />
 				: <div className="my-3 d-flex justify-content-center ">
 					<HashLoader color={`#36d7b7`} loading={true} size={100} />

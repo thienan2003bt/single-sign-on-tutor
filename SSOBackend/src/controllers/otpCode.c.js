@@ -84,8 +84,35 @@ const handleSendCode = async (req, res, next) => {
     }
 }
 
+
+const handleResetPassword = async (req, res, next) => {
+    try {
+        const updatedUser = await UserClientService.handleResetUserPassword(req.body);
+        if (updatedUser && (updatedUser?.status ?? false) === true) {
+            return res.status(200).json({
+                errCode: '0',
+                errMsg: 'Updating new user password successfully',
+                data: updatedUser,
+            });
+        } else {
+            console.log("Error resetting user password: " + updatedUser?.message ?? '');
+            return res.status(401).json({
+                errCode: '-1',
+                errMsg: updatedUser?.message ?? 'Service error resetting user password',
+                data: null,
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            errCode: '-2',
+            errMsg: 'Service error resetting user password',
+            data: null,
+        });
+    }
+}
 const OTPCodeController = {
-    handleSendCode
+    handleSendCode,
+    handleResetPassword,
 }
 
 

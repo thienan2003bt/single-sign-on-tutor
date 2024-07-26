@@ -83,7 +83,10 @@ const generateAccessToken = async (userEmail) => {
 const handleLogin = async (rawUser) => {
     try {
         let existingUser = await db.User.findOne({
-            where: { email: rawUser.email }
+            where: {
+                email: rawUser.email,
+                type: 'LOCAL',
+            }
         });
 
         existingUser = existingUser?.dataValues;
@@ -420,6 +423,63 @@ const updateUserOTPCode = async (email, code) => {
 }
 
 
+const handleResetUserPassword = async (rawData) => {
+    console.log(">> Raw data: ");
+    console.log(rawData);
+
+    try {
+        const user = await db.User.findOne({
+            where: {
+                email: rawData?.email,
+                type: 'LOCAL',
+            },
+            attributes: ['id', 'username', 'password', 'email', 'refreshToken', 'OTPCode']
+        });
+
+        if (!user) {
+            return {
+                status: false,
+                message: 'User not found!',
+            }
+        } else if (user?.OTPCode !== rawData?.OTPCode) {
+            console.log(`User ${user?.OTPCode} vs data ${rawData?.OTPCode}`);
+            return {
+                status: false,
+                message: 'OTP Code not match!',
+            }
+        }
+
+        const isTheSamePassword = await checkPassword(rawData?.new_password, user?.password)
+        if (isTheSamePassword === true) {
+            return {
+                status: false,
+                message: `New password is the same with the original one!`,
+                data: null,
+            }
+        }
+
+        const newPassword = await hashUserPassword(rawData?.new_password);
+        await user.update({
+            password: newPassword,
+        });
+
+        return {
+            message: `Reset user's password successfully`,
+            status: true,
+            data: {
+                ...user,
+                password: null,
+            },
+        }
+    } catch (error) {
+        console.log("Error: ", error.message);
+        return {
+            status: false,
+            message: `Something wrong resetting user password ...`,
+        }
+    }
+}
+
 const UserClientService = {
     createNewUser,
     handleLogin,
@@ -432,6 +492,7 @@ const UserClientService = {
     upsertUserFromSocialMedia,
     getUserByRefreshToken,
     updateUserOTPCode,
+    handleResetUserPassword,
 }
 
 module.exports = UserClientService;

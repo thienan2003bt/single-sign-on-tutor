@@ -45,6 +45,7 @@ const initWebRoutes = (app) => {
     router.post('/logout', PassportController.handleLogout);
     router.post('/verify_token', LoginController.verifySSOToken);
     router.post('/send-code', OTPCodeController.handleSendCode)
+    router.post('/reset-password', OTPCodeController.handleResetPassword)
     return app.use('/', router);
 }
 

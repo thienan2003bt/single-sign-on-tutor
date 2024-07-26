@@ -5,13 +5,13 @@ import APIController from '../controllers/api.c';
 import UserController from '../controllers/user.c';
 import GroupController from '../controllers/group.c';
 import RoleController from '../controllers/role.c';
-import JWTMiddleware from '../middlewares/jwt.m';
+import JWTController from '../controllers/jwt.c';
 
 
 const initAPIRoutes = (app) => {
     //middlewares
 
-    router.all('*', JWTMiddleware.checkUser, JWTMiddleware.checkUserPermission);
+    router.all('*', JWTController.checkUser, JWTController.checkUserPermission);
 
     //GET
     router.get('/test-api', APIController.getTestAPI);
@@ -19,6 +19,7 @@ const initAPIRoutes = (app) => {
     router.get('/group/show', GroupController.getAllGroups);
     router.get('/account', UserController.getUserAccount);
     router.get('/role/show', RoleController.showRoleList);
+    router.get('/verify-services-jwt', JWTController.checkServiceJWT)
 
     //POST
     router.post('/signup', APIController.postSignup);

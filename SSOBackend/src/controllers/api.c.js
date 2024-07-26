@@ -84,9 +84,10 @@ const postLogout = (req, res, next) => {
         });
     }
 }
+
 module.exports = {
     getTestAPI,
     postSignup,
     postLogin,
-    postLogout
+    postLogout,
 };

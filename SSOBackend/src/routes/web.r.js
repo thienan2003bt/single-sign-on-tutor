@@ -8,6 +8,7 @@ import LoginController from '../controllers/login.c';
 import PassportController from '../controllers/passport.c';
 import GoogleController from '../controllers/social/google.c';
 import FacebookController from '../controllers/social/facebook.c';
+import OTPCodeController from '../controllers/otpCode.c';
 
 /**
  * 
@@ -19,7 +20,7 @@ const initWebRoutes = (app) => {
     router.get('/user', HomeController.renderUserPage);
     router.get('/user/update/:id', HomeController.renderUpdateUserPage);
     router.get('/login', UserMiddleware.isLogin, LoginController.renderLoginPage);
-
+    router.get('/forgot-password', LoginController.renderForgotPasswordPage)
 
     router.get('/auth/google', passport.authenticate(
         'google',
@@ -43,7 +44,8 @@ const initWebRoutes = (app) => {
     router.post('/login', LoginController.handleLogin);
     router.post('/logout', PassportController.handleLogout);
     router.post('/verify_token', LoginController.verifySSOToken);
-
+    router.post('/send-code', OTPCodeController.handleSendCode)
+    router.post('/reset-password', OTPCodeController.handleResetPassword)
     return app.use('/', router);
 }
 

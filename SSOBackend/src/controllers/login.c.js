@@ -102,12 +102,16 @@ const verifySSOToken = async (req, res, next) => {
 
 }
 
+const renderForgotPasswordPage = (req, res) => {
+    return res.render('forgotPassword.ejs')
+}
 
 
 const LoginController = {
     renderLoginPage,
     handleLogin,
-    verifySSOToken
+    verifySSOToken,
+    renderForgotPasswordPage,
 }
 
 

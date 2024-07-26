@@ -1,0 +1,9 @@
+.home-container {
+    & .title {
+        font-size: 22px;
+    }
+
+    & .feature {
+        padding-top: 10px;
+    }
+}

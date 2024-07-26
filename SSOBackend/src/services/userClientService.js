@@ -83,7 +83,10 @@ const generateAccessToken = async (userEmail) => {
 const handleLogin = async (rawUser) => {
     try {
         let existingUser = await db.User.findOne({
-            where: { email: rawUser.email }
+            where: {
+                email: rawUser.email,
+                type: 'LOCAL',
+            }
         });
 
         existingUser = existingUser?.dataValues;
@@ -358,11 +361,123 @@ const upsertUserFromSocialMedia = async (type, rawData) => {
         user.code = uuidv4().toString();
         return user;
     } catch (error) {
-        console.log("Error upserting user from social media, error: ") + error?.message ?? error;
+        console.log("Error upserting user from social media, error: " + error?.message ?? error);
     }
 }
 
-module.exports = {
+const getUserByRefreshToken = async (refreshToken) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                refreshToken: refreshToken
+            },
+        });
+
+        if (user) {
+            const groupWithRoles = await JWTService.getGroupWithRoles(user);
+            return {
+                email: user?.email,
+                username: user?.username,
+                groupWithRoles
+            }
+        }
+
+        return null;
+    } catch (error) {
+        console.log("Error getting user by refresh token, error: " + error?.message ?? error);
+    }
+}
+
+const updateUserOTPCode = async (email, code) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                email: email,
+                type: 'LOCAL',
+            }
+        });
+
+        if (!user) {
+            return {
+                status: false,
+                message: 'User not found',
+            }
+        }
+
+        await user.update({
+            OTPCode: code,
+        });
+
+        return {
+            message: `Update user's OTP code successfully`,
+            status: true,
+            data: user,
+        }
+    } catch (error) {
+        console.log("Error: ", error.message);
+        return {
+            status: false,
+            message: `Something wrong updating user's OTP code ...`,
+        }
+    }
+}
+
+
+const handleResetUserPassword = async (rawData) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                email: rawData?.email,
+                type: 'LOCAL',
+            },
+            attributes: ['id', 'username', 'password', 'email', 'refreshToken', 'OTPCode']
+        });
+
+        if (!user) {
+            return {
+                status: false,
+                message: 'User not found!',
+            }
+        } else if (user?.OTPCode !== rawData?.OTPCode) {
+            return {
+                status: false,
+                message: 'OTP Code not match!',
+            }
+        }
+
+        const isTheSamePassword = await checkPassword(rawData?.new_password, user?.password)
+        if (isTheSamePassword === true) {
+            return {
+                status: false,
+                message: `New password is the same with the original one!`,
+                data: null,
+            }
+        }
+
+        const newPassword = await hashUserPassword(rawData?.new_password);
+        await user.update({
+            password: newPassword,
+            OTPCode: null,
+        });
+
+        return {
+            message: `Reset user's password successfully`,
+            status: true,
+            data: {
+                ...user,
+                password: null,
+            },
+        }
+    } catch (error) {
+        console.log("Error: ", error.message);
+        return {
+            status: false,
+            message: `Something wrong resetting user password ...`,
+        }
+    }
+}
+
+const UserClientService = {
     createNewUser,
     handleLogin,
     showUserList,
@@ -372,4 +487,9 @@ module.exports = {
     updateUserRefreshToken,
     generateAccessToken,
     upsertUserFromSocialMedia,
-};
+    getUserByRefreshToken,
+    updateUserOTPCode,
+    handleResetUserPassword,
+}
+
+module.exports = UserClientService;

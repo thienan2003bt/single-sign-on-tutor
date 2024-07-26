@@ -44,6 +44,17 @@
             justify-content: center;
             align-items: center;
         }
+
+        .forgot-password-link {
+            cursor: pointer;
+            text-decoration: underline;
+            font-style: italic;
+            color: blue;
+        }
+
+        .forgot-password-link:hover {
+            opacity: 0.7;
+        }
     </style>
 </head>
 
@@ -53,7 +64,7 @@
         <div class="row">
             <form action="/login?serviceURL=<%= serviceURL %>" method="POST">
                 <div class="login-container col-6 mx-auto">
-                    <fieldset class="border rounded-3 p-3">
+                    <fieldset class="d-flex flex-column border col-12 rounded-3 p-3">
                         <legend class="float-none w-auto px-3">Login Form</legend>
                         <% if( error !="" ){ %>
                             <div class="alert alert-danger my-1" role="alert">
@@ -77,8 +88,12 @@
                                     </div>
                                 </div>
 
-                                <button type="button" id="login-submit-btn" class="btn btn-primary">Log in</button>
+                                <button type="button" id="login-submit-btn" class="btn btn-primary mx-auto">Login
+                                </button>
+                                <span id="resetPasswordSpan" class="mt-3 text-center forgot-password-link">Forgot
+                                    password?</span>
                                 <hr />
+
 
                                 <div class="other-logins text-center">
                                     <span>Or login with: </span>
@@ -94,12 +109,49 @@
                 </div>
             </form>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 
 <script>
     $(document).ready(() => {
         const serviceURL = window.location.search;
+
+        $('#password').on('keypress', (e) => {
+            if (e.key === "Enter" || e.key === 'NumpadEnter') {
+                e.preventDefault();
+                $('#login-submit-btn').click();
+            }
+        })
+
+        $('#resetPasswordSpan').on('click', () => {
+            window.location.replace('/forgot-password');
+        })
+
+        // $('#resetPasswordSpan').on('click', () => {
+        //     $('#resetPasswordModal').modal('show');
+        // })
+
         $('#login-submit-btn').on('click', () => {
             console.log("serviceURL: " + serviceURL);
             const email = $('#email').val();
